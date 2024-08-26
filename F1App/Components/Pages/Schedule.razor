@@ -1,0 +1,77 @@
+﻿@page "/schedule"
+@using F1App.Models.OpenApiModels
+@using F1App.Models.ErgastApiModels
+@using System.Collections.ObjectModel
+
+<MudText Typo="Typo.h4">Formula 1 2024 Schedule</MudText>
+
+@* <MudSelect Value="@selectedYear" ValueChanged="YearChange" Margin="Margin.Dense" T="string" Label="Year" Variant="Variant.Outlined">
+    <MudSelectItem Value="@("2023")"></MudSelectItem>
+    <MudSelectItem Value="@("2024")"></MudSelectItem>
+</MudSelect> *@
+
+@if (Races is not null)
+{
+    foreach (var race in Races.MRData.RaceTable.Races)
+    {
+        <MudLink Href="@($"/meetingSessions/{race.Season}/{race.Round}")">
+            <MudPaper Elevation="4" Class="pa-10 rounded-xl white-text ma-5">
+                <MudStack Class="mb-n6">
+                    <MudGrid>
+                        <MudStack Row="true" Class="d-flex align-center">
+                            <MudIcon Icon="@Icons.Material.Filled.CalendarToday"></MudIcon>
+                            <MudText Typo="Typo.h6">@race.RaceName</MudText>
+                        </MudStack>
+                    </MudGrid>
+                    <MudGrid Class="mt-3 d-flex justify-space-between">
+                        <MudStack Row="true" Class="green-text text-lighten-2">
+                            <MudIcon Icon="@Icons.Material.Rounded.LocationOn"></MudIcon>
+                            <MudText Typo="Typo.subtitle1">@race.Circuit.circuitName</MudText>
+                        </MudStack>
+                        <MudStack Row="true" Class="cyan-text text-lighten-2">
+                            <MudIcon Icon="@Icons.Material.Filled.AccessTime"></MudIcon>
+                            <MudText Typo="Typo.subtitle1">@race.Date @race.Time</MudText>
+                        </MudStack>
+                    </MudGrid>
+                </MudStack>
+            </MudPaper>
+        </MudLink>
+    }
+}
+else
+{
+    <MudStack Class="d-flex justify-center">
+        @for (int i = 0; i < 5; i++)
+        {
+            <MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave" Width="80%" Height="110px" Class="ma-3 rounded-xl" />
+        }
+    </MudStack>
+}
+
+@code {
+    [Inject]
+    public IHttpClientFactory ClientFactory { get; set; } = default!;
+    [Inject]
+    public NavigationManager _navigationManager { get; set; } = default!;
+
+    public Root Races { get; set; } = null!;
+
+    private string? selectedYear;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var client = ClientFactory.CreateClient("ApiErgast");
+        var datas = client.GetAsync("api/f1/current.json");
+
+        Races = await client.GetFromJsonAsync<Root>($"api/f1/current.json") ?? new();
+
+    }
+
+    public async Task YearChange(string value)
+    {
+        // selectedYear = value;
+        // Races.Clear();
+        // var client = ClientFactory.CreateClient("ApiF1");
+        // Races = await client.GetFromJsonAsync<ObservableCollection<Root>>($"v1/meetings?year={selectedYear}") ?? new();
+    }
+}

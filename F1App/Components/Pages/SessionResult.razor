@@ -1,0 +1,101 @@
+﻿@page "/sessionResult/{season:int}/{round:int}/{type}"
+@using F1App.Models.ErgastApiModels
+@using F1App.Models.OpenApiModels
+@using System.Collections.ObjectModel
+
+@if (Root is not null)
+{
+    if (Results is not null)
+    {
+        <MudText Typo="Typo.h4">@Root.MRData.RaceTable.Races[0].RaceName Race Results</MudText>
+        <MudSimpleTable Class="my-5 rounded-xl" Dense="true" Striped="true" FixedHeader="true">
+            <thead>
+                <tr>
+                    <th>Pos</th>
+                    <th>Driver</th>
+                    <th>Constructor</th>
+                    <th>Time</th>
+                    <th>Points</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var result in Results)
+                {
+                    <tr>
+                        <td>@result.position</td>
+                        <td>@result.Driver.familyName[0]@result.Driver.familyName[1]@result.Driver.familyName[2]</td>
+                        <td>@result.Constructor.name</td>
+                        <td>@(result.Time?.time ?? result.status)</td>
+                        <td>@result.points</td>
+                    </tr>
+                }
+            </tbody>
+        </MudSimpleTable>
+    }
+    else if(QualifyingResults is not null)
+    {
+        <MudText Typo="Typo.h4">@Root.MRData.RaceTable.Races[0].RaceName Qualifying Results</MudText>
+        <MudSimpleTable Dense="true" Striped="true" FixedHeader="true">
+            <thead>
+                <tr>
+                    <th>Pos</th>
+                    <th>Driver</th>
+                    <th>Constructor</th>
+                    <th>Q1</th>
+                    <th>Q2</th>
+                    <th>Q3</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var result in QualifyingResults)
+                {
+                    <tr>
+                        <td>@result.position</td>
+                        <td>@result.Driver.familyName[0]@result.Driver.familyName[1]@result.Driver.familyName[2]</td>
+                        <td>@result.Constructor.name</td>
+                        <td>@result.Q1</td>
+                        <td>@result.Q2</td>
+                        <td>@result.Q3</td>
+                    </tr>
+                }
+            </tbody>
+        </MudSimpleTable>
+    }
+
+}
+else
+{
+
+}
+
+@code {
+    [Inject]
+    private IHttpClientFactory ClientFactory { get; set; } = default!;
+
+    [Parameter]
+    public int Season { get; set; }
+    [Parameter]
+    public int Round { get; set; }
+    [Parameter]
+    public string? Type { get; set; }
+
+    public Root Root { get; set; }
+    public ObservableCollection<Result>? Results { get; set; }
+    public ObservableCollection<QualifyingResult>? QualifyingResults { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var client = ClientFactory.CreateClient("ApiErgast");
+        Root = await client.GetFromJsonAsync<Root>($"api/f1/{Season}/{Round}/{Type}.json") ?? new();
+        if (Root.MRData.RaceTable.Races[0].Results is null)
+        {
+            QualifyingResults = new ObservableCollection<QualifyingResult>(Root.MRData.RaceTable.Races[0].QualifyingResults);
+        }
+        else
+        {
+            Results = new ObservableCollection<Result>(Root.MRData.RaceTable.Races[0].Results);
+        }
+
+    }
+}

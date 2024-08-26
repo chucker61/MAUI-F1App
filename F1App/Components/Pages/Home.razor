@@ -1,0 +1,36 @@
+﻿@page "/"
+
+<MudCarousel Class="mud-width-full rounded-lg mt-5" Style="height:200px;" ShowArrows="false" ShowBullets="false" EnableSwipeGesture="true" AutoCycle="true" TData="object">
+    <MudCarouselItem Transition="Transition.Slide" Color="@Color.Primary">
+        <div class="d-flex" style="height:100%">
+            <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Size="@Size.Large" />
+        </div>
+    </MudCarouselItem>
+    <MudCarouselItem Transition="Transition.Slide" Color="@Color.Secondary">
+        <div class="d-flex" style="height:100%">
+            <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Size="@Size.Large" />
+        </div>
+    </MudCarouselItem>
+    <MudCarouselItem Transition="Transition.Slide">
+        <div class="d-flex" style="height:100%">
+            <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Color="@Color.Primary" Size="@Size.Large" />
+        </div>
+    </MudCarouselItem>
+</MudCarousel>
+
+<MudLink Href="/schedule" class="mx-5">
+    <MudPaper Class="d-flex align-center rounded-xl pa-7 justify-space-between">
+        <MudStack Row="true">
+            <MudIcon Icon="@Icons.Material.Filled.CalendarToday" />
+            <MudText Typo="Typo.h6">SCHEDULE</MudText>
+        </MudStack>
+        <MudStack>
+            <MudIcon Icon="@Icons.Material.Filled.ArrowForward" />
+        </MudStack>
+    </MudPaper>
+</MudLink>
+
+
+@code {
+
+}
