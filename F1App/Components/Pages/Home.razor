@@ -1,21 +1,17 @@
 ﻿@page "/"
+@using F1App.Models.ErgastApiModels
 
 <MudCarousel Class="mud-width-full rounded-lg mt-5" Style="height:200px;" ShowArrows="false" ShowBullets="false" EnableSwipeGesture="true" AutoCycle="true" TData="object">
-    <MudCarouselItem Transition="Transition.Slide" Color="@Color.Primary">
-        <div class="d-flex" style="height:100%">
-            <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Size="@Size.Large" />
-        </div>
-    </MudCarouselItem>
-    <MudCarouselItem Transition="Transition.Slide" Color="@Color.Secondary">
-        <div class="d-flex" style="height:100%">
-            <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Size="@Size.Large" />
-        </div>
-    </MudCarouselItem>
-    <MudCarouselItem Transition="Transition.Slide">
-        <div class="d-flex" style="height:100%">
-            <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Color="@Color.Primary" Size="@Size.Large" />
-        </div>
-    </MudCarouselItem>
+    <MudLink Href="@($"meetingSessions/current/next")" Underline="Underline.None">
+        <MudCarouselItem Transition="Transition.Slide" Color="@Color.Transparent">
+            <div class="d-flex">
+                @if (Root is not null)
+                {
+                    <CustomImageComponent Src="@GetUrlByRace(Root.MRData.RaceTable.Races[0].RaceName)" Name="Next Race" ShortName="@Root.MRData.RaceTable.Races[0].RaceName"></CustomImageComponent>
+                }
+            </div>
+        </MudCarouselItem>
+    </MudLink>
 </MudCarousel>
 
 <MudLink Href="/schedule" class="mx-5">
@@ -30,7 +26,43 @@
     </MudPaper>
 </MudLink>
 
+<MudLink Href="/standings" class="mx-5">
+    <MudPaper Class="d-flex align-center rounded-xl pa-7 justify-space-between">
+        <MudStack Row="true">
+            <MudIcon Icon="@Icons.Material.Filled.FormatListNumbered" />
+            <MudText Typo="Typo.h6">STANDINGS</MudText>
+        </MudStack>
+        <MudStack>
+            <MudIcon Icon="@Icons.Material.Filled.ArrowForward" />
+        </MudStack>
+    </MudPaper>
+</MudLink>
+
 
 @code {
+    [Inject]
+    public IHttpClientFactory ClientFactory { get; set; } = default!;
+
+    public Root Root { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var client = ClientFactory.CreateClient("ApiErgast");
+
+        Root = await client.GetFromJsonAsync<Root>("api/f1/current/next.json") ?? new();
+    }
+
+    public string GetUrlByRace(string race)
+    {
+        return race switch
+        {
+            "Italian Grand Prix" => "https://api.motorsporttickets.com/files/images/e2abee8e-aefb-44de-879b-a9c239b592b0.png",
+            "Warning" => "Color.Warning",
+            "Error" => "Color.Error",
+            "Information" => "Color.Info",
+            "Primary" => "Color.Primary",
+            _ => "Color.Default"
+        };
+    }
 
 }

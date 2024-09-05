@@ -1,4 +1,4 @@
-﻿@page "/meetingSessions/{season:int}/{round:int}"
+﻿@page "/meetingSessions/{season}/{round}"
 @using System.Collections.ObjectModel
 @using F1App.Models.ErgastApiModels
 @using F1App.Models.OpenApiModels
@@ -6,7 +6,7 @@
 
 @if (Races is not null)
 {
-    <MudText Class="ma-5" Typo="Typo.h3">@Races[0].RaceName Grand Prix (@Races[0].Time)</MudText>
+    <MudText Class="ma-5" Typo="Typo.h3">@Races[0].RaceName (@Races[0].Time)</MudText>
 }
 
 <MudTimeline Class="ml-n10" TimelinePosition="TimelinePosition.Start">
@@ -14,24 +14,24 @@
     {
         if (Races[0].Sprint is null)
         {
-            <SessionTimeLineItemComponent SessionName="Practice 1" Severity="Severity.Warning" Color="Color.Warning" Icon="@Icons.Material.Filled.Sports" Date="@Races[0].FirstPractice.time"></SessionTimeLineItemComponent>
-            <SessionTimeLineItemComponent SessionName="Practice 2" Severity="Severity.Warning" Color="Color.Warning" Icon="@Icons.Material.Filled.Sports" Date="@Races[0].SecondPractice.time"></SessionTimeLineItemComponent>
-            <SessionTimeLineItemComponent SessionName="Practice 3" Severity="Severity.Warning" Color="Color.Warning" Icon="@Icons.Material.Filled.Sports" Date="@Races[0].ThirdPractice.time"></SessionTimeLineItemComponent>
-            <SessionTimeLineItemComponent Href="@($"/sessionResult/{Races[0].Season}/{Races[0].Round}/qualifying")" SessionName="Qualifying" Severity="Severity.Info" Color="Color.Info" Icon="@Icons.Material.Filled.Timer" Date="@Races[0].Qualifying.time"></SessionTimeLineItemComponent>
-            <SessionTimeLineItemComponent Href="@($"/sessionResult/{Races[0].Season}/{Races[0].Round}/results")" SessionName="Race" Severity="Severity.Error" Color="Color.Error" Icon="@Icons.Material.Filled.Flag" Date="@Races[0].Time"></SessionTimeLineItemComponent>
+            <SessionTimeLineItemComponent SessionName="Practice 1" Severity="Severity.Warning" Background="rgba(249, 168, 37,0.05)" Color="Color.Warning" TextColor="Theme.PaletteLight.Warning" Icon="@Icons.Material.Filled.Sports" Date="@Races[0].FirstPractice.time"></SessionTimeLineItemComponent>
+            <SessionTimeLineItemComponent SessionName="Practice 2" Severity="Severity.Warning" Background="rgba(249, 168, 37,0.05)" Color="Color.Warning" TextColor="Theme.PaletteLight.Warning" Icon="@Icons.Material.Filled.Sports" Date="@Races[0].SecondPractice.time"></SessionTimeLineItemComponent>
+            <SessionTimeLineItemComponent SessionName="Practice 3" Severity="Severity.Warning" Background="rgba(249, 168, 37,0.05)" Color="Color.Warning" TextColor="Theme.PaletteLight.Warning" Icon="@Icons.Material.Filled.Sports" Date="@Races[0].ThirdPractice.time"></SessionTimeLineItemComponent>
+            <SessionTimeLineItemComponent Href="@($"/sessionResult/{Races[0].Season}/{Races[0].Round}/qualifying")" SessionName="Qualifying" Severity="Severity.Info" Background="rgba(21, 101, 192,0.05)" Color="Color.Info" TextColor="Theme.PaletteLight.Info" Icon="@Icons.Material.Filled.Timer" Date="@Races[0].Qualifying.time"></SessionTimeLineItemComponent>
+            <SessionTimeLineItemComponent Href="@($"/sessionResult/{Races[0].Season}/{Races[0].Round}/results")" SessionName="Race" Severity="Severity.Error" Background="rgba(198, 40, 40,0.05)" Color="Color.Error" TextColor="Theme.PaletteLight.Error" Icon="@Icons.Material.Filled.Flag" Date="@Races[0].Time"></SessionTimeLineItemComponent>
         }
         else
         {
-            <SessionTimeLineItemComponent SessionName="Practice 1" Severity="Severity.Warning" Color="Color.Warning" Icon="@Icons.Material.Filled.Sports" Date="@Races[0].FirstPractice.time"></SessionTimeLineItemComponent>
-            <SessionTimeLineItemComponent SessionName="Sprint Qualifying" Severity="Severity.Info" Color="Color.Info" Icon="@Icons.Material.Filled.Timer" Date="@Races[0].SecondPractice.time"></SessionTimeLineItemComponent>
-            <SessionTimeLineItemComponent SessionName="Sprint" Severity="Severity.Error" Color="Color.Error" Icon="@Icons.Material.Filled.Flag" Date="@Races[0].Sprint.time"></SessionTimeLineItemComponent>
-            <SessionTimeLineItemComponent Href="@($"/sessionResult/{Races[0].Season}/{Races[0].Round}/qualifying")" SessionName="Qualifying" Severity="Severity.Info" Color="Color.Info" Icon="@Icons.Material.Filled.Timer" Date="@Races[0].Qualifying.time"></SessionTimeLineItemComponent>
-            <SessionTimeLineItemComponent Href="@($"/sessionResult/{Races[0].Season}/{Races[0].Round}/results")" SessionName="Race" Severity="Severity.Error" Color="Color.Error" Icon="@Icons.Material.Filled.Flag" Date="@Races[0].Time"></SessionTimeLineItemComponent>
+            <SessionTimeLineItemComponent SessionName="Practice 1" Severity="Severity.Warning" Background="rgba(249, 168, 37,0.05)" Color="Color.Warning" TextColor="Theme.PaletteLight.Warning" Icon="@Icons.Material.Filled.Sports" Date="@Races[0].FirstPractice.time"></SessionTimeLineItemComponent>
+            <SessionTimeLineItemComponent SessionName="Sprint Qualifying" Severity="Severity.Info" Background="rgba(21, 101, 192,0.05)" Color="Color.Info" TextColor="Theme.PaletteLight.Info" Icon="@Icons.Material.Filled.Timer" Date="@Races[0].SecondPractice.time"></SessionTimeLineItemComponent>
+            <SessionTimeLineItemComponent SessionName="Sprint" Severity="Severity.Error" Background="rgba(198, 40, 40,0.05)" Color="Color.Error" TextColor="Theme.PaletteLight.Error" Icon="@Icons.Material.Filled.Flag" Date="@Races[0].Sprint.time"></SessionTimeLineItemComponent>
+            <SessionTimeLineItemComponent Href="@($"/sessionResult/{Races[0].Season}/{Races[0].Round}/qualifying")" SessionName="Qualifying" Severity="Severity.Info" Background="rgba(21, 101, 192,0.05)" Color="Color.Info" TextColor="Theme.PaletteLight.Info" Icon="@Icons.Material.Filled.Timer" Date="@Races[0].Qualifying.time"></SessionTimeLineItemComponent>
+            <SessionTimeLineItemComponent Href="@($"/sessionResult/{Races[0].Season}/{Races[0].Round}/results")" SessionName="Race" Severity="Severity.Error" Background="rgba(198, 40, 40,0.05)" Color="Color.Error" TextColor="Theme.PaletteLight.Error" Icon="@Icons.Material.Filled.Flag" Date="@Races[0].Time"></SessionTimeLineItemComponent>
         }
     }
     else
     {
-        <MudGrid Class="d-flex justify-center">
+        @* <MudGrid Class="d-flex justify-center">
             <MudSkeleton SkeletonType="SkeletonType.Text" Width="80%" Height="80px"></MudSkeleton>
         </MudGrid>
         for (int i = 0; i < 5; i++)
@@ -40,7 +40,13 @@
                 <MudSkeleton SkeletonType="SkeletonType.Circle" Animation="Animation.Wave" Width="40px" Height="40px" />
                 <MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave" Class="rounded-lg ml-5" Width="70%" Height="110px" />
             </MudGrid>
-        }
+        } *@
+
+        <SessionTimeLineItemComponent SessionName="Practice 1" Severity="Severity.Warning" Background="rgba(249, 168, 37,0.05)" Color="Color.Warning" TextColor="Theme.PaletteLight.Warning" Icon="@Icons.Material.Filled.Sports" Date="deneme"></SessionTimeLineItemComponent>
+        <SessionTimeLineItemComponent SessionName="Practice 2" Severity="Severity.Warning" Background="rgba(249, 168, 37,0.05)" Color="Color.Warning" TextColor="Theme.PaletteLight.Warning" Icon="@Icons.Material.Filled.Sports" Date="deneme"></SessionTimeLineItemComponent>
+        <SessionTimeLineItemComponent SessionName="Practice 3" Severity="Severity.Warning" Background="rgba(249, 168, 37,0.05)" Color="Color.Warning" TextColor="Theme.PaletteLight.Warning" Icon="@Icons.Material.Filled.Sports" Date="deneme"></SessionTimeLineItemComponent>
+        <SessionTimeLineItemComponent SessionName="Qualifying" Severity="Severity.Info" IsVisible="block" Background="rgba(21, 101, 192,0.05)" Color="Color.Info" TextColor="Theme.PaletteLight.Info" Icon="@Icons.Material.Filled.Timer" Date="deneme"></SessionTimeLineItemComponent>
+        <SessionTimeLineItemComponent  SessionName="Race" Severity="Severity.Error" Background="rgba(198, 40, 40,0.05)" Color="Color.Error" TextColor="Theme.PaletteLight.Error" Icon="@Icons.Material.Filled.Flag" Date="deneme"></SessionTimeLineItemComponent>
     }
 
 </MudTimeline>
@@ -52,11 +58,12 @@
     [Inject]
     private NavigationManager NavigationManager { get; set; } = default!;
 
+    private MudTheme Theme = new MudTheme();
 
     [Parameter]
-    public int Season { get; set; }
+    public string Season { get; set; }
     [Parameter]
-    public int Round { get; set; }
+    public string Round { get; set; }
 
     private Root Root { get; set; } = null!;
     private List<Race> Races { get; set; } = null!;

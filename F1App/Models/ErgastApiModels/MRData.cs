@@ -9,6 +9,7 @@
         public string offset { get; set; }
         public string total { get; set; }
         public RaceTable RaceTable { get; set; }
+        public StandingsTable StandingsTable { get; set; }
     }
 
 

@@ -1,20 +1,28 @@
-﻿<MudTimelineItem Color="@Color">
+﻿@using MudBlazor.Utilities
+<MudTimelineItem Color="@Color">
     <MudLink Href=@Href>
-        <MudAlert Severity="@Severity" Class="rounded-xl pa-3" Icon="false" Dense="true">
-            <MudStack Row="true" Class="d-flex align-center">
+        <MudPaper Class="rounded-xl pa-3" Style="@($"background-color:{Background};color:{TextColor}")">
+            <MudStack Row="true" Class="d-flex align-center justify-space-between flex-grow-1 gap-4">
                 <MudStack>
                     <MudText Typo="Typo.h4">@SessionName</MudText>
                     <MudText Typo="Typo.body2">@Date</MudText>
                 </MudStack>
-                <MudStack Justify="Justify.FlexEnd">
+                <MudStack>
                     <MudIcon Icon="@Icon" Color="Color.Surface" Size="Size.Large" />
+                    <MudStack Style=@($"display:{IsVisible}") Row="true" Class="d-flex align-center">
+                        <MudIcon Style=@($"display:{IsVisible}") Icon="@Icons.Material.Outlined.Videocam" Color="Color.Error" Size="Size.Small"></MudIcon>
+                        <MudText Style=@($"display:{IsVisible}") Color="Color.Error" Typo="Typo.body1">Live</MudText>
+                    </MudStack>
                 </MudStack>
             </MudStack>
-        </MudAlert>
+            <MudProgressLinear Style=@($"display:{IsVisible}") Color="Color.Success" Rounded="true" Indeterminate="true" />
+        </MudPaper>
     </MudLink>
 </MudTimelineItem>
 
 @code {
+    private MudTheme Theme = new MudTheme();
+
     [Parameter]
     public string Href { get; set; }
     [Parameter]
@@ -26,6 +34,11 @@
     [Parameter]
     public Color Color { get; set; }
     [Parameter]
+    public string Background { get; set; }
+    [Parameter]
+    public MudColor TextColor { get; set; }
+    [Parameter]
     public string Icon { get; set; }
-
+    [Parameter]
+    public string IsVisible { get; set; } = "none";
 }
