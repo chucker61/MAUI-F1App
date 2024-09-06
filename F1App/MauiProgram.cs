@@ -23,7 +23,7 @@ namespace F1App
             });
             builder.Services.AddHttpClient("ApiErgast", client =>
             {
-                client.BaseAddress = new Uri("https://ergast.com");
+                client.BaseAddress = new Uri("https://api.jolpi.ca");
             });
 #if DEBUG
     		builder.Services.AddBlazorWebViewDeveloperTools();

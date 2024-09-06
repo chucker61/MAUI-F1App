@@ -49,7 +49,7 @@
     {
         var client = ClientFactory.CreateClient("ApiErgast");
 
-        Root = await client.GetFromJsonAsync<Root>("api/f1/current/next.json") ?? new();
+        Root = await client.GetFromJsonAsync<Root>("ergast/f1/current/next.json") ?? new();
     }
 
     public string GetUrlByRace(string race)
@@ -57,7 +57,7 @@
         return race switch
         {
             "Italian Grand Prix" => "https://api.motorsporttickets.com/files/images/e2abee8e-aefb-44de-879b-a9c239b592b0.png",
-            "Warning" => "Color.Warning",
+            "Azerbaijan Grand Prix" => "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Ilham_Aliyev_watched_the_opening_ceremony_of_the_2018_Formula-1_Azerbaijan_Grand_Prix_and_final_race_35.jpg/1920px-Ilham_Aliyev_watched_the_opening_ceremony_of_the_2018_Formula-1_Azerbaijan_Grand_Prix_and_final_race_35.jpg",
             "Error" => "Color.Error",
             "Information" => "Color.Info",
             "Primary" => "Color.Primary",

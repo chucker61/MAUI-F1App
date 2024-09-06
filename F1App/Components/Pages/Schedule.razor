@@ -14,7 +14,7 @@
 {
     foreach (var race in Races.MRData.RaceTable.Races)
     {
-        <MudLink Href="@($"/meetingSessions/{race.Season}/{race.Round}")">
+        <MudLink Href="@($"/sessions/{race.Season}/{race.Round}")">
             <MudPaper Elevation="4" Class="pa-10 rounded-xl white-text ma-5">
                 <MudStack Class="mb-n6">
                     <MudGrid>
@@ -34,41 +34,19 @@
                         </MudStack>
                     </MudGrid>
                 </MudStack>
+                <MudProgressLinear Style=@(race.IsLive==true ? "display:block" : "display:none") Color="Color.Success" Rounded="true" Indeterminate="true" />
             </MudPaper>
         </MudLink>
     }
 }
 else
 {
-    @* <MudStack Class="d-flex justify-center">
+    <MudStack Class="d-flex justify-center">
         @for (int i = 0; i < 5; i++)
         {
             <MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave" Width="80%" Height="110px" Class="ma-3 rounded-xl" />
         }
-    </MudStack> *@
-
-    <MudLink Href="@($"/meetingSessions/latest/latest")">
-        <MudPaper Elevation="4" Class="pa-10 rounded-xl white-text ma-5">
-            <MudStack Class="mb-n6">
-                <MudGrid>
-                    <MudStack Row="true" Class="d-flex align-center">
-                        <MudIcon Icon="@Icons.Material.Filled.CalendarToday"></MudIcon>
-                        <MudText Typo="Typo.h6">AKSDASD</MudText>
-                    </MudStack>
-                </MudGrid>
-                <MudGrid Class="mt-3 d-flex justify-space-between">
-                    <MudStack Row="true" Class="green-text text-lighten-2">
-                        <MudIcon Icon="@Icons.Material.Rounded.LocationOn"></MudIcon>
-                        <MudText Typo="Typo.subtitle1">asdasd</MudText>
-                    </MudStack>
-                    <MudStack Row="true" Class="cyan-text text-lighten-2">
-                        <MudIcon Icon="@Icons.Material.Filled.AccessTime"></MudIcon>
-                        <MudText Typo="Typo.subtitle1">ALSDŞASD</MudText>
-                    </MudStack>
-                </MudGrid>
-            </MudStack>
-        </MudPaper>
-    </MudLink>
+    </MudStack>
 }
 
 @code {
@@ -79,21 +57,35 @@ else
 
     public Root Races { get; set; } = null!;
 
+    [Parameter]
+    public string IsVisible { get; set; } = "none";
+
     private string? selectedYear;
 
     protected override async Task OnInitializedAsync()
     {
         var client = ClientFactory.CreateClient("ApiErgast");
 
-        Races = await client.GetFromJsonAsync<Root>($"api/f1/current.json") ?? new();
+        Races = await client.GetFromJsonAsync<Root>($"ergast/f1/current.json") ?? new();
+        var today = DateTime.Now;
+        var todayPlusNone = $"{today.Year}-{today.Month:D2}-{today.Day}";
+        var todayPlusOne = $"{today.AddDays(1).Year}-{today.AddDays(1).Month:D2}-{today.AddDays(1).Day}";
+        var todayPlusTwo = $"{today.AddDays(9).Year}-{today.AddDays(9).Month:D2}-{today.AddDays(9).Day}";
+        foreach (var race in Races.MRData.RaceTable.Races)
+        {
+            if(todayPlusNone == race.Date || todayPlusOne == race.Date || todayPlusTwo == race.Date)
+            {
+                race.IsLive = true;
+            }
+        }
 
     }
 
-    public async Task YearChange(string value)
-    {
-        // selectedYear = value;
-        // Races.Clear();
-        // var client = ClientFactory.CreateClient("ApiF1");
-        // Races = await client.GetFromJsonAsync<ObservableCollection<Root>>($"v1/meetings?year={selectedYear}") ?? new();
-    }
+    // public async Task YearChange(string value)
+    // {
+    //     selectedYear = value;
+    //     Races.Clear();
+    //     var client = ClientFactory.CreateClient("ApiF1");
+    //     Races = await client.GetFromJsonAsync<ObservableCollection<Root>>($"v1/meetings?year={selectedYear}") ?? new();
+    // }
 }

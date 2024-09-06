@@ -66,8 +66,8 @@
     {
         var client = ClientFactory.CreateClient("ApiErgast");
 
-        RootDriver = await client.GetFromJsonAsync<Root>("api/f1/current/driverStandings.json") ?? new();
-        RootConstructor = await client.GetFromJsonAsync<Root>("api/f1/current/constructorStandings.json") ?? new();
+        RootDriver = await client.GetFromJsonAsync<Root>($"ergast/f1/{DateTime.Now.Year}/driverstandings.json") ?? new();
+        RootConstructor = await client.GetFromJsonAsync<Root>($"ergast/f1/{DateTime.Now.Year}/constructorstandings.json") ?? new();
 
     }
 }
