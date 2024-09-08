@@ -1,11 +1,10 @@
 ﻿@page "/sessionResult/{season:int}/{round:int}/{type}"
+@inject ISnackbar Snackbar
 @using F1App.Models.ErgastApiModels
 @using F1App.Models.OpenApiModels
 @using System.Collections.ObjectModel
+@using Newtonsoft.Json
 
-<MudStack Class="d-flex justify-center my-5">
-    <MudText Typo="Typo.h4">@(Root != null ? $"{Root.MRData.RaceTable.Races[0].RaceName} " : "")@(Results != null ? "Race Results" : "")@(SprintResults != null ? "Sprint Results" : "")@(QualifyingResults != null ? "Qualifying Results" : "")</MudText>
-</MudStack>
 
 @if (Root is not null)
 {
@@ -32,28 +31,46 @@ else
     [Parameter]
     public string? Type { get; set; }
 
-    public Root Root { get; set; }
-    public ObservableCollection<Result>? Results { get; set; }
-    public ObservableCollection<QualifyingResult>? QualifyingResults { get; set; }
-    public ObservableCollection<SprintResult>? SprintResults { get; set; }
+    public Root Root { get; set; } = default!;
+    public ObservableCollection<Result>? Results { get; set; } = default!;
+    public ObservableCollection<QualifyingResult>? QualifyingResults { get; set; } = default!;
+    public ObservableCollection<SprintResult>? SprintResults { get; set; } = default!;
 
 
     protected override async Task OnInitializedAsync()
     {
         var client = ClientFactory.CreateClient("ApiErgast");
-        Root = await client.GetFromJsonAsync<Root>($"ergast/f1/{Season}/{Round}/{Type}.json") ?? new();
-        if (Root.MRData.RaceTable.Races[0].Results is not null)
+
+        var response = await client.GetAsync($"ergast/f1/{Season}/{Round}/{Type}.json");
+
+        if (!response.IsSuccessStatusCode)
         {
-            Results = new ObservableCollection<Result>(Root.MRData.RaceTable.Races[0].Results);
+            Snackbar.Add("Error loading data", Severity.Error);
         }
-        else if (Root.MRData.RaceTable.Races[0].QualifyingResults is not null)
+
+        var content = await response.Content.ReadAsStringAsync();
+        Root = JsonConvert.DeserializeObject<Root>(content) ?? new();
+
+        if (Root.MRData.RaceTable.Races.Count == 0)
         {
-            QualifyingResults = new ObservableCollection<QualifyingResult>(Root.MRData.RaceTable.Races[0].QualifyingResults);
+            Snackbar.Add("Error loading data", Severity.Error);
         }
-        else if (Root.MRData.RaceTable.Races[0].SprintResults is not null)
+        else
         {
-            SprintResults = new ObservableCollection<SprintResult>(Root.MRData.RaceTable.Races[0].SprintResults);
+            if (Root.MRData.RaceTable.Races[0].Results is not null)
+            {
+                Results = new ObservableCollection<Result>(Root.MRData.RaceTable.Races[0].Results);
+            }
+            else if (Root.MRData.RaceTable.Races[0].QualifyingResults is not null)
+            {
+                QualifyingResults = new ObservableCollection<QualifyingResult>(Root.MRData.RaceTable.Races[0].QualifyingResults);
+            }
+            else if (Root.MRData.RaceTable.Races[0].SprintResults is not null)
+            {
+                SprintResults = new ObservableCollection<SprintResult>(Root.MRData.RaceTable.Races[0].SprintResults);
+            }
         }
+
 
     }
 }

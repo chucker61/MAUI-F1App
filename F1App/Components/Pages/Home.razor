@@ -1,8 +1,11 @@
 ﻿@page "/"
 @using F1App.Models.ErgastApiModels
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@using Newtonsoft.Json
 
 <MudCarousel Class="mud-width-full rounded-lg mt-5" Style="height:200px;" ShowArrows="false" ShowBullets="false" EnableSwipeGesture="true" AutoCycle="true" TData="object">
-    <MudLink Href="@($"meetingSessions/current/next")" Underline="Underline.None">
+    <MudLink Href="@($"sessions/current/next")" Underline="Underline.None">
         <MudCarouselItem Transition="Transition.Slide" Color="@Color.Transparent">
             <div class="d-flex">
                 @if (Root is not null)
@@ -49,19 +52,43 @@
     {
         var client = ClientFactory.CreateClient("ApiErgast");
 
-        Root = await client.GetFromJsonAsync<Root>("ergast/f1/current/next.json") ?? new();
+        var respone = await client.GetAsync("ergast/f1/current/next.json");
+        if (respone.IsSuccessStatusCode)
+        {
+            var content = await respone.Content.ReadAsStringAsync();
+            Root = JsonConvert.DeserializeObject<Root>(content) ?? new();
+        }
     }
 
     public string GetUrlByRace(string race)
     {
         return race switch
         {
+            "Bahrain Grand Prix" => "https://i.ytimg.com/vi/UN-etYnjFWk/maxresdefault.jpg",
+            "Saudi Arabian Grand Prix" => "https://cdn.racingnews365.com/2024/_1092x683_crop_center-center_85_none/Qiddiya-street-track-2.jpg?v=1709640021",
+            "Australian Grand Prix" => "https://motorsportmagazine.b-cdn.net/wp-content/uploads/2019/03/2019australianf1gpstart.jpg",
+            "Japanese Grand Prix" => "https://media.formula1.com/image/upload/f_auto,c_limit,w_1440,q_auto/f_auto/q_auto/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/Japan",
+            "Chinese Grand Prix" => "https://ichef.bbci.co.uk/live-experience/cps/1024/cpsprodpb/BBB2/production/_133205084_chinesegp.jpg",
+            "Miami Grand Prix" => "https://assets.simpleviewinc.com/simpleview/image/upload/crm/miamifl/Formula_1_cars_on_track_1440x900_BD084F50-5056-A36A-0B6797D01C2EA2AD_be07a273-5056-a36a-0bd0d82ef2deb826.jpg",
+            "Emilia Romagna Grand Prix" => "https://www.si.com/.image/t_share/MTk3OTY3MTk2MDg3OTE5OTk2/si202204240658.jpg",
+            "Monaco Grand Prix" => "https://d3cm515ijfiu6w.cloudfront.net/wp-content/uploads/2022/04/13165756/Cars-take-the-hairpin-in-the-Monaco-Grand-Prix-planetF1.jpg",
+            "Canadian Grand Prix" => "https://motorsporttickets.com/blog/wp-content/uploads/2024/02/GS-12-11-on-L.jpg",
+            "Spanish Grand Prix" => "https://e0.365dm.com/23/05/2048x1152/skysports-f1-spanish-gp-f1-2022_6173972.jpg?20230531115133",
+            "Austrian Grand Prix" => "https://cdn-4.motorsport.com/images/amp/254xGbE0/s1000/max-verstappen-red-bull-racing.jpg",
+            "British Grand Prix" => "https://media.formula1.com/image/upload/f_auto,c_limit,w_1440,q_auto/f_auto/q_auto/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/Great%20Britain",
+            "Hungarian Grand Prix" => "https://www.racefans.net/wp-content/uploads/2019/08/racefansdotnet-20190804-201310-30.jpg",
+            "Belgian Grand Prix" => "https://www.senategpexperiences.com/Uploads/PackageGroups/2068/3587A9AB-EE15-48A8-99D2-CBB4BCFC7658.jpeg",
+            "Dutch Grand Prix" => "https://cdn-6.motorsport.com/images/amp/0mbEw8M2/s1000/formula-1-dutch-gp-2022-sergio-3.jpg",
             "Italian Grand Prix" => "https://api.motorsporttickets.com/files/images/e2abee8e-aefb-44de-879b-a9c239b592b0.png",
             "Azerbaijan Grand Prix" => "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Ilham_Aliyev_watched_the_opening_ceremony_of_the_2018_Formula-1_Azerbaijan_Grand_Prix_and_final_race_35.jpg/1920px-Ilham_Aliyev_watched_the_opening_ceremony_of_the_2018_Formula-1_Azerbaijan_Grand_Prix_and_final_race_35.jpg",
-            "Error" => "Color.Error",
-            "Information" => "Color.Info",
-            "Primary" => "Color.Primary",
-            _ => "Color.Default"
+            "Singapore Grand Prix" => "https://singaporegp.sg/media/2023/press-release/20230609/image1.jpeg",
+            "United States Grand Prix" => "https://cdn-7.motorsport.com/images/amp/0rGDgVq2/s1000/oscar-piastri-mclaren-mcl60-es.jpg",
+            "Mexico City Grand Prix" => "https://www.thef1spectator.com/wp-content/uploads/2022/08/foro-sol-view-mexican-gp.jpg",
+            "São Paulo Grand Prix" => "https://autoaction.com.au/wp-content/uploads/2023/11/2022-sao-paulo-start.jpg?v=1698992798",
+            "Las Vegas Grand Prix" => "https://cdn.roadtrips.com/wp-content/uploads/2023/11/sphere-image.jpg",
+            "Qatar Grand Prix" => "https://www.racefans.net/wp-content/uploads/2023/10/racefansdotnet-7000041_HiRes.jpg",
+            "Abu Dhabi Grand Prix" => "https://cdn.platinumlist.net/upload/event/abu_dhabi_grand_prix_2024_f1_race_2024_dec_06_2024_dec_07_yas_marina_circuit_yas_island_abu_dhabi_91448-full-en1710504959.jpg",
+            _ => "https://cdn.shopify.com/s/files/1/1095/6418/products/F1-logo.png?v=1574506191"
         };
     }
 

@@ -1,5 +1,6 @@
 ﻿@page "/standings"
 @using F1App.Models.ErgastApiModels
+@using Newtonsoft.Json
 
 
 <MudTabs Elevation="4" Rounded="true" Centered="true" Color="@Color.Primary">
@@ -66,8 +67,18 @@
     {
         var client = ClientFactory.CreateClient("ApiErgast");
 
-        RootDriver = await client.GetFromJsonAsync<Root>($"ergast/f1/{DateTime.Now.Year}/driverstandings.json") ?? new();
-        RootConstructor = await client.GetFromJsonAsync<Root>($"ergast/f1/{DateTime.Now.Year}/constructorstandings.json") ?? new();
+        var driverResponse = await client.GetAsync($"ergast/f1/{DateTime.Now.Year}/driverstandings.json");
+        if (driverResponse.IsSuccessStatusCode)
+        {
+            var driverContent = await driverResponse.Content.ReadAsStringAsync();
+            RootDriver = JsonConvert.DeserializeObject<Root>(driverContent) ?? new();
+        }
 
+        var constructorResponse = await client.GetAsync($"ergast/f1/{DateTime.Now.Year}/constructorstandings.json");
+        if (constructorResponse.IsSuccessStatusCode)
+        {
+            var constructorContent = await constructorResponse.Content.ReadAsStringAsync();
+            RootConstructor = JsonConvert.DeserializeObject<Root>(constructorContent) ?? new();
+        }
     }
 }

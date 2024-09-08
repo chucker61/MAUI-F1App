@@ -2,6 +2,7 @@
 @using System.Collections.ObjectModel
 @using F1App.Models.ErgastApiModels
 @using F1App.Models.OpenApiModels
+@using Newtonsoft.Json
 
 
 @if (Races is not null)
@@ -66,15 +67,14 @@
     {
         var client = ClientFactory.CreateClient("ApiErgast");
 
-        try
+        var response = await client.GetAsync($"ergast/f1/{Season}/{Round}.json");
+        if (response.IsSuccessStatusCode)
         {
-            Root = await client.GetFromJsonAsync<Root>($"ergast/f1/{Season}/{Round}.json") ?? new();
+            var content = await response.Content.ReadAsStringAsync();
+            Root = JsonConvert.DeserializeObject<Root>(content) ?? new();
+            Races = Root.MRData.RaceTable.Races;
         }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-        Races = Root.MRData.RaceTable.Races;
+
     }
 
 

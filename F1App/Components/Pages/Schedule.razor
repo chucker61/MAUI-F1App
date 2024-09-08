@@ -2,13 +2,9 @@
 @using F1App.Models.OpenApiModels
 @using F1App.Models.ErgastApiModels
 @using System.Collections.ObjectModel
+@using Newtonsoft.Json
 
 <MudText Typo="Typo.h4">Formula 1 2024 Schedule</MudText>
-
-@* <MudSelect Value="@selectedYear" ValueChanged="YearChange" Margin="Margin.Dense" T="string" Label="Year" Variant="Variant.Outlined">
-    <MudSelectItem Value="@("2023")"></MudSelectItem>
-    <MudSelectItem Value="@("2024")"></MudSelectItem>
-</MudSelect> *@
 
 @if (Races is not null)
 {
@@ -64,28 +60,26 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var client = ClientFactory.CreateClient("ApiErgast");
-
-        Races = await client.GetFromJsonAsync<Root>($"ergast/f1/current.json") ?? new();
         var today = DateTime.Now;
         var todayPlusNone = $"{today.Year}-{today.Month:D2}-{today.Day}";
         var todayPlusOne = $"{today.AddDays(1).Year}-{today.AddDays(1).Month:D2}-{today.AddDays(1).Day}";
         var todayPlusTwo = $"{today.AddDays(9).Year}-{today.AddDays(9).Month:D2}-{today.AddDays(9).Day}";
-        foreach (var race in Races.MRData.RaceTable.Races)
+
+        var client = ClientFactory.CreateClient("ApiErgast");
+
+        var response = await client.GetAsync("ergast/f1/current.json");
+        if (response.IsSuccessStatusCode)
         {
-            if(todayPlusNone == race.Date || todayPlusOne == race.Date || todayPlusTwo == race.Date)
+            var content = await response.Content.ReadAsStringAsync();
+            Races = JsonConvert.DeserializeObject<Root>(content) ?? new();
+            foreach (var race in Races.MRData.RaceTable.Races)
             {
-                race.IsLive = true;
+                if (todayPlusNone == race.Date || todayPlusOne == race.Date || todayPlusTwo == race.Date)
+                {
+                    race.IsLive = true;
+                }
             }
         }
 
     }
-
-    // public async Task YearChange(string value)
-    // {
-    //     selectedYear = value;
-    //     Races.Clear();
-    //     var client = ClientFactory.CreateClient("ApiF1");
-    //     Races = await client.GetFromJsonAsync<ObservableCollection<Root>>($"v1/meetings?year={selectedYear}") ?? new();
-    // }
 }
