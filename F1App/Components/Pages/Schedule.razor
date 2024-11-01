@@ -10,7 +10,7 @@
 {
     foreach (var race in Races.MRData.RaceTable.Races)
     {
-        <MudLink Href="@($"/sessions/{race.Season}/{race.Round}")">
+        <MudLink id="@nextRaceId" Href="@($"/sessions/{race.Season}/{race.Round}")">
             <MudPaper Elevation="4" Class="pa-10 rounded-xl white-text ma-5">
                 <MudStack Class="mb-n6">
                     <MudGrid>
@@ -50,8 +50,11 @@ else
     public IHttpClientFactory ClientFactory { get; set; } = default!;
     [Inject]
     public NavigationManager _navigationManager { get; set; } = default!;
+    [Inject]
+    public IJSRuntime jsRuntime { get; set; } = default!;
 
     public Root Races { get; set; } = null!;
+    private string nextRaceId = "";
 
     [Parameter]
     public string IsVisible { get; set; } = "none";
@@ -80,6 +83,8 @@ else
                 }
             }
         }
+        nextRaceId = "10";
+        await jsRuntime.InvokeVoidAsync("scrollToElement", nextRaceId);
 
     }
 }
